@@ -156,7 +156,7 @@ def uniformCostSearch(problem):
     #A variant of Dijkstra's
     next = util.PriorityQueue()
 
-    visited_cost = {} #Holds state-cost relationship
+    visited = set() 
     actions = []
 
     start = problem.getStartState()
@@ -167,22 +167,25 @@ def uniformCostSearch(problem):
     while not next.isEmpty():
         curr, actions, cost = next.pop()
 
-        if (curr not in visited_cost) or cost < visited_cost[curr]:
-            visited_cost[curr] = cost
+        if problem.isGoalState(curr):
+            return actions
+        
+        if curr not in visited:
+            visited.add(curr)
 
-            if problem.isGoalState(curr):
-                return actions
-            
-            succs = problem.getSuccessors(curr)
+            succx = problem.getSuccessors(curr)
 
-            for state_, action_, cost_ in succs:
-                actions_ = actions + [action_]
+            for state_, action, cost_ in succx:
+
+                actions_ = actions + [action]
                 updatedCost = cost + cost_
-                newState = (state_, actions_, updatedCost)
 
-                next.update(newState, updatedCost)
+                #Priority Queue will only update the cost of an already existing state IF the new cost is lesser
+                
+                next.update((state_, actions_, updatedCost), updatedCost)
 
     return actions
+
     #util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
