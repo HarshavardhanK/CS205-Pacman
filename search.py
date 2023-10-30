@@ -204,7 +204,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     actions = []
 
     start = problem.getStartState()
-    startState = (start, actions, heuristic(start, problem))
+    startState = (start, actions, 0)
 
     next.push((startState), startState[-1]) #PQ item = (node, cost)
 
@@ -222,11 +222,11 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             for state_, action, cost_ in succx:
 
                 actions_ = actions + [action]
-                updatedCost = cost + cost_ + heuristic(state_, problem)
+                updatedCost = cost + cost_ 
 
                 #Priority Queue will only update the cost of an already existing state IF the new cost is lesser
                 
-                next.update((state_, actions_, updatedCost), updatedCost)
+                next.update((state_, actions_, updatedCost), updatedCost + heuristic(state_, problem))
 
     return actions
 
