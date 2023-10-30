@@ -87,39 +87,44 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    
-    #print "Start: ", problem.getStartState()
-    #print "Start's successors: ", problem.getSuccessors(problem.getStartState())
+    # Return type is a list of actions to be performed to reach the goal
 
-    visited = set()
+    # print "Start:", problem.getStartState()
+    # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    # print "Start's successors:", problem.getSuccessors(problem.getStartState())
     
-    next = util.Stack()
+    visited = set()
+    stack = util.Stack()
+    stack.push((problem.getStartState(), ""))
+    parentNode = {}
+    goalNode = None
+
+    while not stack.isEmpty():
+        top = stack.pop()
+        # print "Here:", top
+
+        if problem.isGoalState(top[0]):
+            # print(top[0],problem.isGoalState(top[0]))
+            goalNode = top
+            break
+        
+        visited.add(top[0])
+        for neighbor in problem.getSuccessors(top[0]):
+            if neighbor[0] not in visited:
+                stack.push((neighbor[0], neighbor[1]))
+                parentNode[neighbor[0]] = top
+
     actions = []
 
-    start = problem.getStartState()
-    
-    next.push((start, actions))
+    # for x in parentNode:
+    #     print(x, parentNode[x])
+    while goalNode[0] is not problem.getStartState():
+        # print(goalNode,  problem.getStartState())
+        actions.append(goalNode[1])
+        goalNode = parentNode[goalNode[0]]
 
-    while not next.isEmpty():
-        curr, actions = next.pop()
-
-        if problem.isGoalState(curr):
-            return actions
-
-        if curr not in visited:
-            visited.add(curr)
-
-            successors = problem.getSuccessors(curr)
-
-            for state_, action_, cost_ in successors:
-                #actions.append(action_)
-                actions_ = actions + [action_]
-                next.push((state_, actions_))
-
-    return actions
-
-    
-    #util.raiseNotDefined()
+    # print(actions)
+    return actions[::-1]
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
