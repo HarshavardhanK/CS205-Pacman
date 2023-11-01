@@ -87,7 +87,6 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-
     # Return type is a list of actions to be performed to reach the goal
 
     # print "Start:", problem.getStartState()
@@ -130,12 +129,69 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #util.raiseNotDefined()
+    next = util.Queue()
+    visited = set()
+
+    start = problem.getStartState()
+    actions = []
+
+    next.push((start, actions))
+
+    while not next.isEmpty():
+        curr, actions = next.pop()
+
+        if problem.isGoalState(curr):
+            return actions
+        
+        if curr not in visited:
+            visited.add(curr)
+
+            succs = problem.getSuccessors(curr)
+
+            for state_, action_, cost_ in succs:
+                actions_ = actions + [action_]
+                next.push((state_, actions_))
+
+    return actions_
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #A variant of Dijkstra's
+    next = util.PriorityQueue()
+
+    visited = set() 
+    actions = []
+
+    start = problem.getStartState()
+    startState = (start, actions, 0) #Cost = 0 for start
+
+    next.push((startState), 0) #PQ item = (node, cost)
+
+    while not next.isEmpty():
+        curr, actions, cost = next.pop()
+
+        if problem.isGoalState(curr):
+            return actions
+        
+        if curr not in visited:
+            visited.add(curr)
+
+            succx = problem.getSuccessors(curr)
+
+            for state_, action, cost_ in succx:
+
+                actions_ = actions + [action]
+                updatedCost = cost + cost_
+
+                #Priority Queue will only update the cost of an already existing state IF the new cost is lesser
+                
+                next.update((state_, actions_, updatedCost), updatedCost)
+
+    return actions
+
+    #util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
     """
@@ -147,7 +203,37 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    next = util.PriorityQueue()
+
+    visited = set() 
+    actions = []
+
+    start = problem.getStartState()
+    startState = (start, actions, 0)
+
+    next.push((startState), startState[-1]) #PQ item = (node, cost)
+
+    while not next.isEmpty():
+        curr, actions, cost = next.pop()
+
+        if problem.isGoalState(curr):
+            return actions
+        
+        if curr not in visited:
+            visited.add(curr)
+
+            succx = problem.getSuccessors(curr)
+
+            for state_, action, cost_ in succx:
+
+                actions_ = actions + [action]
+                updatedCost = cost + cost_ 
+
+                #Priority Queue will only update the cost of an already existing state IF the new cost is lesser
+                
+                next.update((state_, actions_, updatedCost), updatedCost + heuristic(state_, problem))
+
+    return actions
 
 
 # Abbreviations
