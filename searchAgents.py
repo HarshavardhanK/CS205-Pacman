@@ -40,6 +40,7 @@ from game import Actions
 import util
 import time
 import search
+import pdb
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -295,14 +296,17 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return (self.startingPosition, [])
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
+        # print(state)
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if len(state[1]) == 4:
+            return True
+        return False
 
     def getSuccessors(self, state):
         """
@@ -316,6 +320,9 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        # print(state)
+        cordinates,visitedList = state
+        x,y = cordinates
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -325,6 +332,15 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+            if hitsWall:
+                continue
+            newVistedList = visitedList[:] # making a new copy of list so that it can be modified without affecting old entries
+            if ((nextx, nexty) in self.corners) and ((nextx, nexty) not in newVistedList):
+                newVistedList.append((nextx, nexty))
+            successors.append((((nextx,nexty),newVistedList), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -360,7 +376,30 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    
+    heuristicValue = 0
+
+    unvistedCorners = []
+    for corner in corners:
+        if corner not in state[1]:
+            unvistedCorners.append(corner)
+
+    currentPos = state[0]
+
+    while unvistedCorners:
+        costToNearestCorner = 9999 # random large value
+        closestCorner = unvistedCorners[0]
+        for corner in unvistedCorners:
+            cost = util.manhattanDistance(corner, currentPos)
+            if cost <= costToNearestCorner:
+                costToNearestCorner = cost
+                closestCorner = corner
+        heuristicValue += costToNearestCorner
+        currentPos = closestCorner
+        unvistedCorners.remove(closestCorner)
+        
+    # print "Heuristic value" + str(heuristicValue)
+    return heuristicValue
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"

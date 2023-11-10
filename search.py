@@ -18,6 +18,8 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+import pdb
+
 
 class SearchProblem:
     """
@@ -131,7 +133,7 @@ def breadthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
     #util.raiseNotDefined()
     next = util.Queue()
-    visited = set()
+    visited = []
 
     start = problem.getStartState()
     actions = []
@@ -142,11 +144,13 @@ def breadthFirstSearch(problem):
         curr, actions = next.pop()
 
         if problem.isGoalState(curr):
+            print(actions)
             return actions
         
         if curr not in visited:
-            visited.add(curr)
-
+            visited.append(curr)
+            
+            # pdb.set_trace()
             succs = problem.getSuccessors(curr)
 
             for state_, action_, cost_ in succs:
@@ -161,7 +165,7 @@ def uniformCostSearch(problem):
     #A variant of Dijkstra's
     next = util.PriorityQueue()
 
-    visited = set() 
+    visited = []
     actions = []
 
     start = problem.getStartState()
@@ -176,7 +180,7 @@ def uniformCostSearch(problem):
             return actions
         
         if curr not in visited:
-            visited.add(curr)
+            visited.append(curr)
 
             succx = problem.getSuccessors(curr)
 
@@ -205,7 +209,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     "*** YOUR CODE HERE ***"
     next = util.PriorityQueue()
 
-    visited = set() 
+    visited = []
     actions = []
 
     start = problem.getStartState()
@@ -220,7 +224,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             return actions
         
         if curr not in visited:
-            visited.add(curr)
+            visited.append(curr)
 
             succx = problem.getSuccessors(curr)
 
