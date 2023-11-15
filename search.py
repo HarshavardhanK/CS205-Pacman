@@ -144,7 +144,7 @@ def breadthFirstSearch(problem):
         curr, actions = next.pop()
 
         if problem.isGoalState(curr):
-            print(actions)
+            # print(actions)
             return actions
         
         if curr not in visited:
