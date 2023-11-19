@@ -41,6 +41,7 @@ import util
 import time
 import search
 import pdb
+import search
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -492,8 +493,15 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
+    foods = foodGrid.asList()
     "*** YOUR CODE HERE ***"
-    return 0
+    heuristic = 0
+
+    for pos in foods:
+       heuristic = max(heuristic, mazeDistance(position,pos, problem.startingGameState))
+        
+    # print "Heuristic value" + str(heuristic)
+    return heuristic
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -524,7 +532,7 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return search.breadthFirstSearch(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -560,13 +568,14 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # print(self.food.asList())
+        return True if state in self.food.asList() else False
 
 def mazeDistance(point1, point2, gameState):
     """
     Returns the maze distance between any two points, using the search functions
     you have already built. The gameState can be any game state -- Pacman's
-    position in that state is ignored.
+    position in that state is ignored.  
 
     Example usage: mazeDistance( (2,4), (5,6), gameState)
 
